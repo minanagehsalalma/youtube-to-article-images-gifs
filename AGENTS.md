@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-`main.py` is the CLI entry point that orchestrates transcript parsing, sectioning, media picking, and article generation. Core modules live in `scripts/` (`article_generator.py`, `downloader.py`, `frame_extractor.py`, `screenshotter.py`, `html_renderer.py`). Generated runtime artifacts are written under `output/` and treated as build output. Sample static data files in the repo include `mock_transcript.json` and `article_draft.md`.
+`main.py` is the CLI entry point that orchestrates transcript parsing, sectioning, media picking, and article generation. Core modules live in `scripts/` (`article_generator.py`, `downloader.py`, `frame_extractor.py`, `html_renderer.py`). Generated runtime artifacts are written under `output/` and treated as build output. Sample static data files in the repo include `mock_transcript.json` and `article_draft.md`.
 
 ## Build, Test, and Development Commands
 - `pip install -r requirements.txt` installs the required Python dependencies.

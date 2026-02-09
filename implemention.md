@@ -22,7 +22,6 @@ Core support modules:
 - `scripts/article_generator.py`
 - `scripts/html_renderer.py`
 - `scripts/frame_extractor.py` (utility, not in the main runtime path)
-- `scripts/screenshotter.py` (standalone utility for external screenshots; not used in the main runtime path)
 
 ## 2. High-Level Pipeline
 
