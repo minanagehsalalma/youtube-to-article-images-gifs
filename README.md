@@ -1,81 +1,92 @@
 # YouTube to Article with Images/GIFs
 
-Convert a YouTube video into a Markdown/HTML article with smart media selection:
-- single-frame JPGs (fastest), or
-- short GIF clips (better context for moving UI moments).
+Turn a YouTube video into a Markdown/HTML article with auto-selected media:
+- JPG frames (fastest), or
+- GIF clips (better for moving UI moments).
 
-The media picker uses visual scoring (Pillow), and can use targeted OCR checks (system Tesseract) for weak/ambiguous matches.
-HTML export and styling are handled by `scripts/html_renderer.py`.
+## What You Get
 
-## Requirements
+Each run writes to `output/<video_id>/`:
+- `transcript.json`
+- `article_draft.md`
+- `article_final.md`
+- `article_final.html`
+- `images/`
 
-### System tools
-- `ffmpeg` for frame/GIF extraction
-- `yt-dlp` for video download
-- `tesseract` (optional but recommended for OCR-assisted matching)
+## Install
 
-### Python packages
+### 1) Python packages
 ```bash
 pip install -r requirements.txt
 ```
 
-## API key
+### 2) System tools
+- `ffmpeg` (required for frames/GIFs)
+- `yt-dlp` (required for video download)
+- `tesseract` (optional, improves OCR matching in accurate mode)
 
-Set `GEMINI_API_KEY` (or `GOOGLE_API_KEY`):
+## Quick Start
+
+Mock/offline smoke test:
+```bash
+python main.py "any-url" --mock
+```
+
+Real run (recommended default):
+```bash
+python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --mode transcript --image-profile fast
+```
+
+## Modes (Important)
+
+- `--mode transcript` (default):
+  - No Gemini API key needed.
+  - Builds article sections directly from transcript timing/content.
+  - More deterministic and easier to debug.
+
+- `--mode gemini`:
+  - Requires `GEMINI_API_KEY` (or `GOOGLE_API_KEY`).
+  - Gemini writes the draft article text.
+  - Can be more natural, but less deterministic.
+
+Gemini mode example:
+```bash
+python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --mode gemini
+```
+
+## Gemini API Key (Only if Using `--mode gemini`)
 
 ```powershell
 setx GEMINI_API_KEY "YOUR_KEY_HERE"
 ```
 
-Quick validation:
+Validate key:
 ```bash
 python test_gemini_key.py
 ```
 
-## Run examples
+## Most Useful Options
 
-Mock mode:
-```bash
-python main.py "any-url" --mock
-```
+- `--gif`: output GIF clips instead of JPG frames.
+- `--image-profile fast|balanced|accurate`:
+  - `fast`: fastest, lowest CPU.
+  - `balanced`: better matching with modest extra work.
+  - `accurate`: best matching, slowest, can use OCR (`--ocr-budget`).
+- `--smart-retry`: lightweight OCR retry for weak matches in `fast`/`balanced`.
+- `--html-style article|basic`: final HTML style.
+- `--mock`: run without network calls for testing.
 
-Real run (default profile is `fast`):
+Examples:
 ```bash
-python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --mode transcript --image-profile fast
-```
-
-Enable targeted retry on weak sections:
-```bash
-python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --image-profile fast --smart-retry
-```
-
-Use GIF output instead of JPG frames (default `--gif-duration` is `2.6` seconds):
-```bash
+# GIF output
 python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --gif
+
+# Better matching profile
+python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --image-profile balanced
+
+# Gemini-written draft
+python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --mode gemini
 ```
-
-HTML style presets:
-```bash
-# Current balanced article style (default)
-python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --html-style article
-
-# Minimal/basic style
-python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --html-style basic
-```
-
-Shortcut flags:
-- `--html-article` = `--html-style article`
-- `--html-basic` = `--html-style basic`
-
-## Profiles
-
-- `fast`: lowest CPU, visual scoring only
-- `balanced`: extra fallback pass before acceptance
-- `accurate`: multi-pass plus bounded OCR reranking (`--ocr-budget`)
-
-Outputs are written to `output/<video_id>/` with `article_final.md`, `article_final.html`, and `images/`.
-
-Recommended GitHub repo name: `youtube-to-article-images-gifs`
 
 ## Data and copyright
 
