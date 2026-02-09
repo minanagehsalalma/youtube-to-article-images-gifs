@@ -1,0 +1,42 @@
+[
+    {
+        "start": 0.0,
+        "duration": 6.0,
+        "text": "Welcome to our fictional productivity workshop where we redesign a team dashboard from scratch."
+    },
+    {
+        "start": 6.0,
+        "duration": 8.0,
+        "text": "Step one is clarity: we group tasks by owner and deadline so everyone can see priorities in one glance."
+    },
+    {
+        "start": 14.0,
+        "duration": 8.0,
+        "text": "Step two is rhythm: we create a lightweight weekly review that tracks completed work and open blockers."
+    },
+    {
+        "start": 22.0,
+        "duration": 8.0,
+        "text": "Step three is focus: we add a no-meeting block each morning so deep work happens before chat traffic spikes."
+    },
+    {
+        "start": 30.0,
+        "duration": 7.0,
+        "text": "To support this flow, we automate status updates with templates instead of writing reports from zero each Friday."
+    },
+    {
+        "start": 37.0,
+        "duration": 7.0,
+        "text": "We also define a simple scorecard with cycle time, reopened tasks, and handoff delay to spot process friction."
+    },
+    {
+        "start": 44.0,
+        "duration": 7.0,
+        "text": "At the end of the pilot, the team ships faster, misses fewer deadlines, and spends less time in status meetings."
+    },
+    {
+        "start": 51.0,
+        "duration": 5.0,
+        "text": "This mock transcript is synthetic example data for local testing and documentation only."
+    }
+]
