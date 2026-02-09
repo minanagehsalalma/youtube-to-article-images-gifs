@@ -1,4 +1,5 @@
 # YouTube to Article with Images/GIFs
+![Demo](https://github.com/user-attachments/assets/72d694b8-e3cf-4384-88f1-9a36ca43b520)
 
 Given a YouTube URL, this project:
 - downloads the transcript,
