@@ -19,12 +19,6 @@ HTML export and styling are handled by `scripts/html_renderer.py`.
 pip install -r requirements.txt
 ```
 
-Optional (Level B screenshots):
-```bash
-pip install -U playwright
-playwright install chromium
-```
-
 ## API key
 
 Set `GEMINI_API_KEY` (or `GOOGLE_API_KEY`):
@@ -42,31 +36,31 @@ python test_gemini_key.py
 
 Mock mode:
 ```bash
-python main.py "any-url" --mock --level A
+python main.py "any-url" --mock
 ```
 
 Real run (default profile is `fast`):
 ```bash
-python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --level A --mode transcript --image-profile fast
+python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --mode transcript --image-profile fast
 ```
 
 Enable targeted retry on weak sections:
 ```bash
-python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --level A --image-profile fast --smart-retry
+python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --image-profile fast --smart-retry
 ```
 
 Use GIF output instead of JPG frames (default `--gif-duration` is `2.6` seconds):
 ```bash
-python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --level A --gif
+python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --gif
 ```
 
 HTML style presets:
 ```bash
 # Current balanced article style (default)
-python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --level A --html-style article
+python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --html-style article
 
 # Minimal/basic style
-python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --level A --html-style basic
+python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --html-style basic
 ```
 
 Shortcut flags:

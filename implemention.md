@@ -22,7 +22,7 @@ Core support modules:
 - `scripts/article_generator.py`
 - `scripts/html_renderer.py`
 - `scripts/frame_extractor.py` (utility, not in the main runtime path)
-- `scripts/screenshotter.py` (utility for Level B ideas / external screenshots)
+- `scripts/screenshotter.py` (standalone utility for external screenshots; not used in the main runtime path)
 
 ## 2. High-Level Pipeline
 
@@ -35,7 +35,7 @@ Core support modules:
 3. Build article draft:
    - `--mode transcript`: deterministic transcript segmentation + placeholders
    - `--mode gemini`: call `scripts/article_generator.generate_article(...)`
-4. For `--level A`:
+4. Media extraction and rendering:
    - Download video with `yt-dlp` (or reuse existing `video.mp4`)
    - Replace placeholders by selecting best media near section timestamps
    - Export final Markdown and HTML
@@ -97,7 +97,7 @@ Behavior:
 - Calls Gemini via `google-genai`.
 - Writes model output directly to `article_draft.md`.
 
-## 5. Media Selection Engine (Level A)
+## 5. Media Selection Engine
 
 Main function:
 - `inject_best_images`
@@ -214,7 +214,6 @@ Python packages:
 - `google-genai`
 - `youtube-transcript-api`
 - `pillow`
-- `playwright` (optional)
 
 System tools:
 - `yt-dlp`
@@ -226,7 +225,6 @@ Lazy imports are used for optional paths, so mock/basic flows fail less often wh
 ## 9. Known Boundaries and Research Opportunities
 
 Current boundaries:
-- Level B is not implemented in main path.
 - Heading/title inference is heuristic and English-centric.
 - OCR currently uses Tesseract with fixed settings (`--oem 1 --psm 6 -l eng`).
 
@@ -241,22 +239,22 @@ Research opportunities:
 
 Real run, fast profile, article HTML:
 ```bash
-python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --mode transcript --level A --image-profile fast --html-style article
+python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --mode transcript --image-profile fast --html-style article
 ```
 
 Real run, GIF output:
 ```bash
-python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --mode transcript --level A --gif
+python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --mode transcript --gif
 ```
 
 Basic HTML style:
 ```bash
-python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --mode transcript --level A --html-basic
+python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --mode transcript --html-basic
 ```
 
 Mock smoke test:
 ```bash
-python main.py "any-url" --mock --level A
+python main.py "any-url" --mock
 ```
 
 Unit tests:

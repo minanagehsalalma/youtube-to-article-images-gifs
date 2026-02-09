@@ -1050,7 +1050,6 @@ def inject_best_images(md_text: str, video_path: str, images_dir: str,
 async def run_pipeline(
     url: str,
     output_dir: str,
-    level: str = "A",
     mock: bool = False,
     model: str | None = None,
     max_items: int = 50,
@@ -1068,7 +1067,7 @@ async def run_pipeline(
     html_style: str = "article",
     mode: str = "transcript"
 ):
-    print(f"--- Starting Pipeline for Level {level}  ---")
+    print("--- Starting Pipeline ---")
 
     from scripts.downloader import get_video_id, download_transcript, download_video
     from scripts.article_generator import generate_article
@@ -1118,62 +1117,57 @@ async def run_pipeline(
         Path(article_draft_path).write_text(md, encoding="utf-8")
 
     # 4) Images + final MD/HTML
-    if level == "A":
-        print("Step 3 (Level A): Downloading video (once) + injecting best-matching images...")
-        print(f"Image picker profile: {image_profile}")
-        print(f"Output media: {'GIF clips' if gif else 'single frames'}")
-        print(f"HTML style: {html_style}")
-        if image_profile == "accurate":
-            print(f"OCR budget: {ocr_budget if ocr_budget > 0 else 'auto'}")
-        elif smart_retry:
-            print(f"Smart retry: on (OCR budget: {ocr_budget if ocr_budget > 0 else 'auto-small'})")
-        video_path = download_video(url, work_dir) if not mock else None
-        if not video_path or not os.path.exists(video_path):
-            print("Failed to download video for image extraction.")
-        else:
-            md_text = Path(article_draft_path).read_text(encoding="utf-8", errors="replace")
-            final_md, replaced, total = inject_best_images(
-                md_text, video_path, images_dir,
-                frame_offset=frame_offset,
-                frame_window=frame_window,
-                candidates=candidates,
-                image_profile=image_profile,
-                ocr_budget=ocr_budget,
-                smart_retry=smart_retry,
-                media_type="gif" if gif else "frame",
-                gif_duration=gif_duration,
-                gif_fps=gif_fps,
-                gif_width=gif_width,
-            )
-
-            final_md_path = os.path.join(work_dir, "article_final.md")
-            Path(final_md_path).write_text(final_md, encoding="utf-8")
-
-            final_html_path = os.path.join(work_dir, "article_final.html")
-            Path(final_html_path).write_text(md_to_html_basic(final_md, style=html_style), encoding="utf-8")
-
-            print(f"Injected images: {replaced}/{total}")
-            # Keep the video by default (useful when tuning offset/window)
-            # If you want to auto-delete, uncomment:
-            # try: os.remove(video_path)
-            # except OSError: pass
+    print("Step 3: Downloading video (once) + injecting best-matching images...")
+    print(f"Image picker profile: {image_profile}")
+    print(f"Output media: {'GIF clips' if gif else 'single frames'}")
+    print(f"HTML style: {html_style}")
+    if image_profile == "accurate":
+        print(f"OCR budget: {ocr_budget if ocr_budget > 0 else 'auto'}")
+    elif smart_retry:
+        print(f"Smart retry: on (OCR budget: {ocr_budget if ocr_budget > 0 else 'auto-small'})")
+    video_path = download_video(url, work_dir) if not mock else None
+    if not video_path or not os.path.exists(video_path):
+        print("Failed to download video for image extraction.")
     else:
-        print("Level B not implemented in this patch.")
+        md_text = Path(article_draft_path).read_text(encoding="utf-8", errors="replace")
+        final_md, replaced, total = inject_best_images(
+            md_text, video_path, images_dir,
+            frame_offset=frame_offset,
+            frame_window=frame_window,
+            candidates=candidates,
+            image_profile=image_profile,
+            ocr_budget=ocr_budget,
+            smart_retry=smart_retry,
+            media_type="gif" if gif else "frame",
+            gif_duration=gif_duration,
+            gif_fps=gif_fps,
+            gif_width=gif_width,
+        )
+
+        final_md_path = os.path.join(work_dir, "article_final.md")
+        Path(final_md_path).write_text(final_md, encoding="utf-8")
+
+        final_html_path = os.path.join(work_dir, "article_final.html")
+        Path(final_html_path).write_text(md_to_html_basic(final_md, style=html_style), encoding="utf-8")
+
+        print(f"Injected images: {replaced}/{total}")
+        # Keep the video by default (useful when tuning offset/window)
+        # If you want to auto-delete, uncomment:
+        # try: os.remove(video_path)
+        # except OSError: pass
 
     print("\n--- Pipeline Complete! ---")
     print(f"Results are in: {work_dir}")
     print(f"Draft : {article_draft_path}")
-    if level == "A":
-        print(f"Final : {os.path.join(work_dir, 'article_final.md')}")
-        print(f"HTML  : {os.path.join(work_dir, 'article_final.html')}")
-        print(f"Images: {images_dir}")
+    print(f"Final : {os.path.join(work_dir, 'article_final.md')}")
+    print(f"HTML  : {os.path.join(work_dir, 'article_final.html')}")
+    print(f"Images: {images_dir}")
     return 0
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="YouTube Video to Article Automation (Gemini + Correct Image Injection)")
     parser.add_argument("url", help="YouTube Video URL")
-    parser.add_argument("--level", choices=["A", "B"], default="A", help="Automation level (A: Inject best-matching frames)")
     parser.add_argument("--out", default=os.path.join(os.path.dirname(__file__), "output"), help="Output directory")
     parser.add_argument("--mock", action="store_true", help="Run in mock mode for testing")
     parser.add_argument("--model", default=None, help="Gemini model name (only used in --mode gemini)")
@@ -1215,7 +1209,7 @@ if __name__ == "__main__":
         html_style = "article"
 
     raise SystemExit(asyncio.run(run_pipeline(
-        args.url, args.out, args.level, args.mock, args.model,
+        args.url, args.out, args.mock, args.model,
         max_items=args.max_items,
         min_sections=args.min_sections,
         frame_offset=args.frame_offset,

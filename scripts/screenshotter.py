@@ -7,7 +7,7 @@ import urllib.parse
 async def get_extension_screenshot(extension_name: str, output_path: str) -> bool:
     """Search the Chrome Web Store and screenshot the result page.
 
-    Note: imports playwright lazily so Level A / mock runs without playwright installed.
+    Note: imports playwright lazily because this utility is not part of the main runtime path.
     """
     try:
         from playwright.async_api import async_playwright
