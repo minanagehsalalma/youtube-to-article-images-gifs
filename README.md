@@ -1,8 +1,10 @@
 # YouTube to Article with Images/GIFs
 
-Turn a YouTube video into a Markdown/HTML article with auto-selected media:
-- JPG frames (fastest), or
-- GIF clips (better for moving UI moments).
+Given a YouTube URL, this project:
+- downloads the transcript,
+- generates an article draft (transcript-driven or Gemini-written),
+- picks the best visual match for each section (JPG or GIF),
+- and exports final Markdown + HTML.
 
 ## What You Get
 
@@ -31,11 +33,16 @@ Mock/offline smoke test:
 ```bash
 python main.py "any-url" --mock
 ```
+Flags:
+- `--mock`: skips network calls and uses local mock transcript data.
 
 Real run (recommended default):
 ```bash
 python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --mode transcript --image-profile fast
 ```
+Flags:
+- `--mode transcript`: builds article sections directly from transcript timing/text.
+- `--image-profile fast`: fastest media matching profile.
 
 ## Modes (Important)
 
@@ -65,28 +72,63 @@ Validate key:
 python test_gemini_key.py
 ```
 
-## Most Useful Options
+## Command Recipes (Flags Explained)
 
-- `--gif`: output GIF clips instead of JPG frames.
-- `--image-profile fast|balanced|accurate`:
-  - `fast`: fastest, lowest CPU.
-  - `balanced`: better matching with modest extra work.
-  - `accurate`: best matching, slowest, can use OCR (`--ocr-budget`).
-- `--smart-retry`: lightweight OCR retry for weak matches in `fast`/`balanced`.
-- `--html-style article|basic`: final HTML style.
-- `--mock`: run without network calls for testing.
-
-Examples:
+Default transcript pipeline (recommended):
 ```bash
-# GIF output
-python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --gif
+python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --mode transcript --image-profile fast
+```
+Flags:
+- `--mode transcript`: deterministic draft from transcript segmentation.
+- `--image-profile fast`: lowest CPU usage and quickest runs.
 
-# Better matching profile
-python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --image-profile balanced
+GIF output with custom length/quality:
+```bash
+python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --gif --gif-duration 3.2 --gif-fps 10 --gif-width 960
+```
+Flags:
+- `--gif`: output GIF clips instead of JPG frames.
+- `--gif-duration 3.2`: each GIF clip lasts 3.2 seconds.
+- `--gif-fps 10`: GIF frame rate (higher = smoother, larger files).
+- `--gif-width 960`: output width in pixels (higher = sharper, larger files).
 
-# Gemini-written draft
+Higher-accuracy media matching:
+```bash
+python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --image-profile accurate --ocr-budget 12
+```
+Flags:
+- `--image-profile accurate`: slower but stronger matching.
+- `--ocr-budget 12`: OCR checks for up to 12 sections.
+
+Gemini-written article draft:
+```bash
 python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --mode gemini
 ```
+Flags:
+- `--mode gemini`: Gemini writes `article_draft.md` before media injection.
+- Requires `GEMINI_API_KEY` or `GOOGLE_API_KEY`.
+
+Minimal HTML style:
+```bash
+python main.py "https://www.youtube.com/watch?v=VIDEO_ID" --html-style basic
+```
+Flags:
+- `--html-style basic`: simpler HTML layout.
+
+## Options Cheat Sheet
+
+- `--mode transcript|gemini`: choose how draft text is produced.
+- `--image-profile fast|balanced|accurate`: choose speed vs matching quality.
+- `--smart-retry`: small OCR retry for weak matches in `fast`/`balanced`.
+- `--gif`: switch output media from JPG to GIF.
+- `--gif-duration <seconds>`: GIF length per section (default `2.6`).
+- `--gif-fps <int>`: GIF frame rate (default `8`).
+- `--gif-width <pixels>`: GIF width (default `880`).
+- `--frame-offset <seconds>`: how long after section start to begin searching frames.
+- `--frame-window <seconds>`: how far ahead to search for good frames.
+- `--candidates <int>`: number of candidate frames to score.
+- `--html-style article|basic`: choose final HTML style.
+- `--mock`: run with local synthetic data for testing.
 
 ## Data and copyright
 
