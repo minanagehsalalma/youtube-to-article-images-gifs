@@ -1,4 +1,4 @@
-# YouTube Video to Article Pipeline (Gemini)
+# YouTube to Article with Images/GIFs
 
 Convert a YouTube video into a Markdown/HTML article with smart media selection:
 - single-frame JPGs (fastest), or
@@ -80,6 +80,8 @@ Shortcut flags:
 - `accurate`: multi-pass plus bounded OCR reranking (`--ocr-budget`)
 
 Outputs are written to `output/<video_id>/` with `article_final.md`, `article_final.html`, and `images/`.
+
+Recommended GitHub repo name: `youtube-to-article-images-gifs`
 
 ## Data and copyright
 
